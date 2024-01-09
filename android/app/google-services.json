@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "462658871448",
+    "project_id": "choice-collection-8fa8b",
+    "storage_bucket": "choice-collection-8fa8b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:462658871448:android:3e9994cf5948f6c5b3f0ed",
+        "android_client_info": {
+          "package_name": "com.example.choice_collection"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAb3qFnGyYTSasXhuAlxgGfMxqApnQWHbw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
