@@ -1,6 +1,8 @@
 
 import 'package:choice_collection/config/config.dart';
+import 'package:choice_collection/resources/color.dart';
 import 'package:choice_collection/ui/product/main_page.dart';
+import 'package:choice_collection/widget/text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -22,17 +24,20 @@ class _UpdateProductState extends State<UpdateProduct> {
   final TextEditingController _productPriceController = TextEditingController();
   final TextEditingController _productNameController = TextEditingController();
   final TextEditingController _productDescController = TextEditingController();
-  final TextEditingController _productExtraController = TextEditingController();
   final TextEditingController _productStatusController = TextEditingController();
+
   String? imageUrl;
+  DateTime? picked;
+
   @override
   void initState() {
     _productNameController.text=widget.snapShot['name'];
-    _productPriceController.text=widget.snapShot['price'];
     _productDescController.text=widget.snapShot['description'];
-    _productExtraController.text=widget.snapShot['extra'];
     _productStatusController.text=widget.snapShot['inStock'];
     imageUrl=widget.snapShot['url'];
+    picked =(widget.snapShot['rentDate'] == null)
+        ? widget.snapShot['rentDate']
+        : widget.snapShot['rentDate'].toDate();
     // TODO: implement initState
     super.initState();
   }
@@ -59,16 +64,31 @@ class _UpdateProductState extends State<UpdateProduct> {
     }
   }
 
-  void updateProductDetails(String productName,String price,String desc,String extra,String status) async {
+  Future<void> selectDate(BuildContext context) async {
+    picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2022),
+      lastDate: DateTime(2030),
+    );
+    setState(() {
+
+    });
+    print(picked);
+    // if (picked != null && picked != context.read<SelectDateProvider>().selectedDate) {
+    //   context.read<SelectDateProvider>().updateSelectedDate(picked);
+    // }
+  }
+
+  void updateProductDetails(String productName,String desc,String status) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     try {
       await firestore.collection('Products').doc(widget.id).update({
         'name': productName,
-        'price': price,
         'url': imageUrl,
-        'extra': extra,
         'description':desc,
+        'rentDate':picked,
         'inStock':status,
         // Add more fields to update if needed
       });
@@ -83,7 +103,7 @@ class _UpdateProductState extends State<UpdateProduct> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Update the product details"),
+        title: const Text("Update the product details"),
       ),
       body: Stack(
         children: [
@@ -115,25 +135,6 @@ class _UpdateProductState extends State<UpdateProduct> {
                   ),
                   const SizedBox(height: 10,),
                   TextField(
-                    keyboardType:TextInputType.number,
-                    controller: _productPriceController,
-                    decoration: const InputDecoration(
-                      labelText: 'Product weight',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 10,),
-                  TextField(
-                    keyboardType:TextInputType.number,
-                    controller: _productExtraController,
-                    decoration: const InputDecoration(
-                      labelText: 'Extra price',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 10,),
-
-                  TextField(
                     controller: _productStatusController,
                     decoration: const InputDecoration(
                       labelText: 'Product status',
@@ -142,16 +143,35 @@ class _UpdateProductState extends State<UpdateProduct> {
                   ),
                   const SizedBox(height: 10,),
                   TextField(
-                    maxLines: 4,
+                    maxLines: 3,
                     controller: _productDescController,
                     decoration: const InputDecoration(
                       labelText: 'Product Description',
                       border: OutlineInputBorder(),
                     ),
                   ),
-
                   const SizedBox(height: 10,),
-                  // Text("Select image.."),
+                  InkWell(
+                    onTap: (){
+                      selectDate(context);
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: AppColor.purple.withOpacity(.7),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 4,),
+                      child:   Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const CommonText.bold("Select date for rent: ",size: 15),
+                          (picked.toString()==null)
+                              ? const Icon(Icons.date_range,size: 30,):Expanded(child: CommonText(picked.toString(),maxLines: 3,)),
+                        ],
+                      ),
+                    ),
+                  ),
                   InkWell(
                     onTap: (){
                       uploadImage();
@@ -183,17 +203,15 @@ class _UpdateProductState extends State<UpdateProduct> {
                   ElevatedButton(
                     onPressed: () {
                       String productName = _productNameController.text.trim();
-                      String productPrice = _productPriceController.text.trim();
+
                       String productDesc = _productDescController.text.trim();
-                      String productExtra = _productExtraController.text.trim();
+
                       String productStatus = _productStatusController.text.trim();
                       //uploadImage();
-                      if (productName.isNotEmpty && productPrice.isNotEmpty&& productStatus.isNotEmpty && productExtra.isNotEmpty && imageUrl!.isNotEmpty && productDesc.isNotEmpty) {
-                        updateProductDetails(productName,productPrice,productDesc,productExtra,productStatus);
+                      if (productName.isNotEmpty && productStatus.isNotEmpty &&  imageUrl!.isNotEmpty && productDesc.isNotEmpty) {
+                        updateProductDetails(productName,productDesc,productStatus);
                         _productNameController.clear();
-                        _productPriceController.clear();
                         _productDescController.clear();
-                        _productExtraController.clear();
                         _productStatusController.clear();
                         imageUrl="";
                       }

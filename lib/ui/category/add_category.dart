@@ -24,7 +24,7 @@ class _AddCatState extends State<AddCat> {
       await firestore.collection('Categories').add({
         'name': categoryName,
         'url':imageUrl,
-        'time ': DateTime.now(),
+        'time': DateTime.now(),
         // Add more fields related to the category if needed
       });
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(),));
@@ -34,8 +34,6 @@ class _AddCatState extends State<AddCat> {
       print('Error adding category: $e');
     }
   }
-
-
   uploadImage() async {
     final _firebaseStorage = FirebaseStorage.instance;
     final _imagePicker = ImagePicker();
@@ -58,6 +56,7 @@ class _AddCatState extends State<AddCat> {
       print('No Image Path Received');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,13 +75,6 @@ class _AddCatState extends State<AddCat> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // TextField(
-                //   controller: _categoryIdController,
-                //   decoration: const InputDecoration(
-                //     labelText: 'Category id',
-                //     border: OutlineInputBorder(),
-                //   ),
-                // ),
                 TextField(
                   controller: _categoryController,
                   decoration: const InputDecoration(

@@ -23,24 +23,23 @@ class _AddProductState extends State<AddProduct> {
   final TextEditingController _productPriceController = TextEditingController();
   final TextEditingController _productNameController = TextEditingController();
   final TextEditingController _productDescController = TextEditingController();
-  final TextEditingController _productExtraController = TextEditingController();
   final TextEditingController _productStatusController = TextEditingController();
 
   String? imageUrl;
+  DateTime? picked;
 
-  void addProductToFirestore(String productName,String productPrice,String desc,String extra,String status) async {
+  void addProductToFirestore(String productName,String desc,String status) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     try {
       await firestore.collection('Products').add({
         'id':widget.catId,
         'name': productName,
-        'price':productPrice,
         'url':imageUrl,
-        'extra':extra,
         'description':desc,
         'inStock':status,
-        'time ': DateTime.now(),
+        'rentDate':picked,
+        'time': DateTime.now(),
         // Add more fields related to the category if needed
       });
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainPageProduct(),));
@@ -48,6 +47,22 @@ class _AddProductState extends State<AddProduct> {
     } catch (e) {
       print('Error adding category: $e');
     }
+  }
+
+  Future<void> selectDate(BuildContext context) async {
+      picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2022),
+      lastDate: DateTime(2030),
+    );
+      setState(() {
+
+      });
+    print(picked);
+    // if (picked != null && picked != context.read<SelectDateProvider>().selectedDate) {
+    //   context.read<SelectDateProvider>().updateSelectedDate(picked);
+    // }
   }
 
   uploadImage() async {
@@ -79,7 +94,7 @@ class _AddProductState extends State<AddProduct> {
       appBar: AppBar(
         title: const CommonText.bold("Add Product",color: AppColor.white,size: 18,),
         backgroundColor: AppColor.primary,
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
             color: AppColor.white
         ),
       ),
@@ -113,7 +128,7 @@ class _AddProductState extends State<AddProduct> {
                   ),
                   const SizedBox(height: 10,),
                   TextField(
-                    maxLines: 6,
+                    maxLines: 3,
                     controller: _productDescController,
                     decoration: const InputDecoration(
                       labelText: 'Product Description',
@@ -121,15 +136,35 @@ class _AddProductState extends State<AddProduct> {
                     ),
                   ),
                   const SizedBox(height: 10,),
-                  // Text("Select image.."),
+                  InkWell(
+                    onTap: (){
+                      selectDate(context);
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: AppColor.purple.withOpacity(.7),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child:  Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const CommonText.bold("Select date for rent: ",size: 15),
+                          (picked==null)
+                              ?const Icon(Icons.date_range,size: 30,):CommonText(picked.toString()),
+                        ],
+                      ),
+                    ),
+                  ),
                   InkWell(
                     onTap: (){
                       uploadImage();
                     },
                     child: Container(
                       // height: 130,
-                        margin: EdgeInsets.all(15),
-                        padding: EdgeInsets.all(40),
+                        margin: const EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(40),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: const BorderRadius.all(
@@ -154,17 +189,12 @@ class _AddProductState extends State<AddProduct> {
                   ElevatedButton(
                     onPressed: () {
                       String productName = _productNameController.text.trim();
-                      String productPrice = _productPriceController.text.trim();
                       String productDesc = _productDescController.text.trim();
-                      String productExtra = _productExtraController.text.trim();
                       String productStatus = _productStatusController.text.trim();
-                      //uploadImage();
-                      if (productName.isNotEmpty && productPrice.isNotEmpty && imageUrl!.isNotEmpty && productDesc.isNotEmpty && productExtra.isNotEmpty) {
-                        addProductToFirestore(productName,productPrice,productDesc,productExtra,productStatus);
+                      if (productName.isNotEmpty  && imageUrl!.isNotEmpty && productDesc.isNotEmpty ) {
+                        addProductToFirestore(productName,productDesc,productStatus);
                         _productNameController.clear();
-                        _productPriceController.clear();
                         _productDescController.clear();
-                        _productExtraController.clear();
                         _productStatusController.clear();
                         imageUrl="";
                       }

@@ -60,22 +60,24 @@ class _UpdateCatState extends State<UpdateCat> {
       }
     }
   }
+
+  final TextEditingController _categoryController = TextEditingController();
+  void deleteCat(String catId) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    try {
+      await firestore.collection('Categories').doc(catId).delete();
+      Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false); // Close the dialog after deletion
+    } catch (e) {
+      print('Error deleting product: $e');
+    }
+  }
+
   @override
   void initState() {
     _categoryController.text=widget.name;
     imageUrl=widget.url;
     // TODO: implement initState
     super.initState();
-  }
-  final TextEditingController _categoryController = TextEditingController();
-  void deleteCat(String catId) async {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    try {
-      await firestore.collection('Categories').doc(catId).delete();
-      Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => HomePage(),)); // Close the dialog after deletion
-    } catch (e) {
-      print('Error deleting product: $e');
-    }
   }
   @override
   Widget build(BuildContext context) {

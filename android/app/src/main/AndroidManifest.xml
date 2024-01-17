@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="choice_collection"
+        android:label="Choice Wedding"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

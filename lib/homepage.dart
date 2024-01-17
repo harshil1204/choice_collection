@@ -1,7 +1,9 @@
 import 'package:choice_collection/resources/color.dart';
 import 'package:choice_collection/ui/category/add_category.dart';
 import 'package:choice_collection/ui/category/categoryList.dart';
+import 'package:choice_collection/ui/drawer/drawer.dart';
 import 'package:choice_collection/ui/product/main_page.dart';
+import 'package:choice_collection/ui/product/productList.dart';
 import 'package:choice_collection/widget/text.dart';
 import 'package:flutter/material.dart';
 
@@ -19,9 +21,21 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const CommonText.bold("Choice Wedding Collection",size: 17,),
+        // leading: Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: Container(
+        //     clipBehavior: Clip.hardEdge,
+        //     decoration: BoxDecoration(
+        //       borderRadius: BorderRadius.circular(30)
+        //     ),
+        //     child: Image.asset("assets/images/logo.png"),
+        //   ),
+        // ),
+        iconTheme: const IconThemeData(color:AppColor.white ),
+        title: const CommonText.bold("Choice Wedding Collection",size: 17),
         backgroundColor: AppColor.primary,
       ),
+      drawer: const CustomDrawer(),
       body:  Stack(
         children: [
           Opacity(
