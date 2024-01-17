@@ -122,7 +122,7 @@ class _AddProductState extends State<AddProduct> {
                   TextField(
                     controller: _productStatusController,
                     decoration: const InputDecoration(
-                      labelText: 'Product Status',
+                      labelText: 'Product Status (true or false)',
                       border: OutlineInputBorder(),
                     ),
                   ),

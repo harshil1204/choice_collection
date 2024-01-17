@@ -137,7 +137,7 @@ class _UpdateProductState extends State<UpdateProduct> {
                   TextField(
                     controller: _productStatusController,
                     decoration: const InputDecoration(
-                      labelText: 'Product status',
+                      labelText: 'Product status (true or false)',
                       border: OutlineInputBorder(),
                     ),
                   ),

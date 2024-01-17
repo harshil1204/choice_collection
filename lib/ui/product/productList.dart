@@ -37,13 +37,17 @@ class _ProductListState extends State<ProductList> {
       }
       Navigator.pop(context); // Close the dialog after deletion
     } catch (e) {
-      print('Error deleting product: $e');
+      if (kDebugMode) {
+        print('Error deleting product: $e');
+      }
     }
   }
   
   DateTime? picked;
   DateTime? startOfDay;
   DateTime? endOfDay;
+  final TextEditingController _tab1=TextEditingController();
+  final TextEditingController _tab2=TextEditingController();
 
   Future<void> _selectDate(BuildContext context) async {
     picked = await showDatePicker(
@@ -55,14 +59,10 @@ class _ProductListState extends State<ProductList> {
      // startOfDay = DateTime(picked!.year, picked!.month, picked!.day);
      // endOfDay = startOfDay!.add(const Duration(days: 1));
         setState(() {
-
         });
-
-
-     print(picked);
-    // if (picked != null && picked != context.read<SelectDateProvider>().selectedDate) {
-    //   context.read<SelectDateProvider>().updateSelectedDate(picked!);
-    // }
+     if (kDebugMode) {
+       print(picked);
+     }
   }
 
   String name="";
@@ -87,15 +87,18 @@ class _ProductListState extends State<ProductList> {
             _selectDate(context);
           }, icon: const Icon(Icons.date_range))
           ],
-          bottom: const TabBar(
+          bottom:  TabBar(
+              onTap: (_) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
               indicatorColor: Colors.white,
               indicatorSize: TabBarIndicatorSize.label,
               labelColor: AppColor.white,
-              labelStyle: TextStyle(
+              labelStyle: const TextStyle(
                   fontSize: 15,color: AppColor.white,
                   fontWeight: FontWeight.bold
               ),
-              tabs:[
+              tabs:const [
                 Tab(text: "In Stock",),
                 Tab(text: "Out Stock",),
               ]
@@ -119,7 +122,9 @@ class _ProductListState extends State<ProductList> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    print(snapshot.data!.docs);
+                    if (kDebugMode) {
+                      print(snapshot.data!.docs);
+                    }
                     return Stack(
                       children: [
                         Opacity(
@@ -148,6 +153,7 @@ class _ProductListState extends State<ProductList> {
                                     const Gap(7),
                                     Expanded(
                                       child: TextField(
+                                        controller: _tab1,
                                         cursorHeight: 25,
                                         decoration: const InputDecoration(
                                             border: InputBorder.none,
@@ -160,7 +166,6 @@ class _ProductListState extends State<ProductList> {
                                           setState(() {
                                             name=value;
                                             search=snapshot.data!.docs.where((element) => element['name'].toString().toLowerCase().startsWith(name.toLowerCase())).toList();
-                                            print("heloooo ::::${search.toString()}");
                                           });
                                         },
                                       ),
@@ -315,7 +320,9 @@ class _ProductListState extends State<ProductList> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    print(snapshot.data!.docs);
+                    if (kDebugMode) {
+                      print(snapshot.data!.docs);
+                    }
                     return Stack(
                       children: [
                         Opacity(
@@ -344,6 +351,7 @@ class _ProductListState extends State<ProductList> {
                                     const Gap(7),
                                     Expanded(
                                       child: TextField(
+                                        controller: _tab2,
                                         cursorHeight: 25,
                                         decoration: const InputDecoration(
                                             border: InputBorder.none,
@@ -356,7 +364,9 @@ class _ProductListState extends State<ProductList> {
                                           setState(() {
                                             name=value;
                                             search=snapshot.data!.docs.where((element) => element['name'].toString().toLowerCase().startsWith(name.toLowerCase())).toList();
-                                            print("heloooo ::::${search.toString()}");
+                                            if (kDebugMode) {
+                                              print("heloooo ::::${search.toString()}");
+                                            }
                                           });
                                         },
                                       ),

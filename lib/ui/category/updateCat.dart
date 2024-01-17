@@ -65,7 +65,22 @@ class _UpdateCatState extends State<UpdateCat> {
   void deleteCat(String catId) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     try {
-      await firestore.collection('Categories').doc(catId).delete();
+      DocumentReference categoryRef = FirebaseFirestore.instance.collection('Categories').doc(catId);
+
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      QuerySnapshot productQuerySnapshot = await FirebaseFirestore.instance.collection('Products').where('id', isEqualTo: catId).get();
+      // await firestore.collection('Categories').doc(catId).delete();
+      // Delete each product in the batch
+      productQuerySnapshot.docs.forEach((productDoc) {
+        batch.delete(FirebaseFirestore.instance.collection('Products').doc(productDoc.id));
+      });
+
+      // Delete the category document
+      batch.delete(categoryRef);
+
+      // Commit the batch
+      await batch.commit();
+
       Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false); // Close the dialog after deletion
     } catch (e) {
       print('Error deleting product: $e');

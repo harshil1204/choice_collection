@@ -19,7 +19,7 @@ class _MainPageProductState extends State<MainPageProduct> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
         color: AppColor.white
         ),
         title: const CommonText.bold("Category List",color: AppColor.white,size: 18,),
@@ -53,7 +53,7 @@ class _MainPageProductState extends State<MainPageProduct> {
                                   Navigator.push(context, MaterialPageRoute(builder: (context) => ProductList(cat_id: snapshot.data!.docs[index].id.toString()),));
                                 },
                                 child: Container(
-                                  decoration: BoxDecoration(/*border: Border.all(width: 1, color: Colors.black), */borderRadius: BorderRadius.circular(9)),
+                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(9)),
                                   child: Column(
                                     children: [
                                       Container(
