@@ -27,7 +27,7 @@ class _AddCatState extends State<AddCat> {
         'time': DateTime.now(),
         // Add more fields related to the category if needed
       });
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(),));
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(),),(route) => false,);
       const SnackBar(content: Text("Category added successfully"),);
       print('Category added successfully');
     } catch (e) {

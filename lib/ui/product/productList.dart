@@ -1,7 +1,6 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:choice_collection/config/config.dart';
-import 'package:choice_collection/provider/dateprovider.dart';
 import 'package:choice_collection/resources/color.dart';
 import 'package:choice_collection/ui/product/update_product.dart';
 import 'package:choice_collection/widget/text.dart';
@@ -10,7 +9,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:provider/provider.dart';
 
 import 'add_product.dart';
 
@@ -35,7 +33,7 @@ class _ProductListState extends State<ProductList> {
       if (kDebugMode) {
         print('Product deleted successfully');
       }
-      Navigator.pop(context); // Close the dialog after deletion
+      //Navigator.pop(context); // Close the dialog after deletion
     } catch (e) {
       if (kDebugMode) {
         print('Error deleting product: $e');
@@ -73,7 +71,7 @@ class _ProductListState extends State<ProductList> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title:  CommonText.bold("Product List   (${picked?.day ?? ""} -${picked?.month ?? ""})",color: AppColor.white,size: 16,),
+          title:  CommonText.bold("Product List   (${picked?.day ?? ""} - ${picked?.month ?? ""})",color: AppColor.white,size: 16,),
           backgroundColor: AppColor.primary,
           iconTheme: const IconThemeData(
               color: AppColor.white
@@ -99,8 +97,8 @@ class _ProductListState extends State<ProductList> {
                   fontWeight: FontWeight.bold
               ),
               tabs:const [
-                Tab(text: "In Stock",),
-                Tab(text: "Out Stock",),
+                Tab(text: "Available",),
+                Tab(text: "In order",),
               ]
           ),
         ),

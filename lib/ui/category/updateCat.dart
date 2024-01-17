@@ -30,7 +30,7 @@ class _UpdateCatState extends State<UpdateCat> {
         'name': catName,
         'url':imageUrl,
       });
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CategoryList(),));
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => CategoryList(),),(route) => false,);
       print('CAtegory details updated successfully');
     } catch (e) {
       print('Error updating product details: $e');

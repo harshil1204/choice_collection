@@ -1,5 +1,6 @@
 
 import 'package:choice_collection/config/config.dart';
+import 'package:choice_collection/homepage.dart';
 import 'package:choice_collection/resources/color.dart';
 import 'package:choice_collection/ui/product/main_page.dart';
 import 'package:choice_collection/widget/text.dart';
@@ -28,6 +29,7 @@ class _UpdateProductState extends State<UpdateProduct> {
 
   String? imageUrl;
   DateTime? picked;
+  DateTime? picked1=DateTime.now();
 
   @override
   void initState() {
@@ -38,6 +40,9 @@ class _UpdateProductState extends State<UpdateProduct> {
     picked =(widget.snapShot['rentDate'] == null)
         ? widget.snapShot['rentDate']
         : widget.snapShot['rentDate'].toDate();
+    picked1 =(widget.snapShot['returnDate'] == null)
+        ? widget.snapShot['returnDate']
+        : widget.snapShot['returnDate'].toDate();
     // TODO: implement initState
     super.initState();
   }
@@ -80,6 +85,22 @@ class _UpdateProductState extends State<UpdateProduct> {
     // }
   }
 
+  Future<void> selectDate1(BuildContext context) async {
+    picked1 = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2022),
+      lastDate: DateTime(2030),
+    );
+    setState(() {
+
+    });
+    print(picked1);
+    // if (picked != null && picked != context.read<SelectDateProvider>().selectedDate) {
+    //   context.read<SelectDateProvider>().updateSelectedDate(picked);
+    // }
+  }
+
   void updateProductDetails(String productName,String desc,String status) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -89,10 +110,10 @@ class _UpdateProductState extends State<UpdateProduct> {
         'url': imageUrl,
         'description':desc,
         'rentDate':picked,
+        'returnDate':picked1,
         'inStock':status,
-        // Add more fields to update if needed
       });
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPageProduct(),));
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(),),(route) => false,);
       print('Product details updated successfully');
     } catch (e) {
       print('Error updating product details: $e');
@@ -167,7 +188,31 @@ class _UpdateProductState extends State<UpdateProduct> {
                         children: [
                           const CommonText.bold("Select date for rent: ",size: 15),
                           (picked.toString()==null)
-                              ? const Icon(Icons.date_range,size: 30,):Expanded(child: CommonText(picked.toString(),maxLines: 3,)),
+                              ? const Icon(Icons.date_range,size: 30,)
+                              :CommonText("${picked!.day.toString()}-${picked!.month.toString()}-${picked!.year.toString()}",maxLines: 3,),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
+                  InkWell(
+                    onTap: (){
+                      selectDate1(context);
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: AppColor.purple.withOpacity(.7),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 4,),
+                      child:   Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const CommonText.bold("Select return order date: ",size: 15),
+                          (picked1.toString()==null)
+                              ? const Icon(Icons.date_range,size: 30,)
+                              :CommonText("${picked1!.day.toString()}-${picked1!.month.toString()}-${picked1!.year.toString()}",maxLines: 3,),
                         ],
                       ),
                     ),
