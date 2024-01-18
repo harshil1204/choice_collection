@@ -71,7 +71,7 @@ class _ProductListState extends State<ProductList> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title:  CommonText.bold("Product List   (${picked?.day ?? ""} - ${picked?.month ?? ""})",color: AppColor.white,size: 16,),
+          title:  CommonText.bold("Product List (${picked?.day ?? ""}-${picked?.month ?? ""})",color: AppColor.white,size: 15,),
           backgroundColor: AppColor.primary,
           iconTheme: const IconThemeData(
               color: AppColor.white
@@ -83,7 +83,17 @@ class _ProductListState extends State<ProductList> {
             ),
           IconButton(onPressed: (){
             _selectDate(context);
-          }, icon: const Icon(Icons.date_range))
+          }, icon: const Icon(Icons.date_range)),
+          InkWell(
+              onTap: (){
+                picked=null;
+                setState(() {
+                });
+              },
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 5.0,vertical: 3.0),
+                child: Icon(Icons.refresh),
+              ))
           ],
           bottom:  TabBar(
               onTap: (_) {
@@ -109,8 +119,7 @@ class _ProductListState extends State<ProductList> {
                     ?FirebaseFirestore.instance.collection('Products')
                     .where('id', isEqualTo: widget.cat_id)
                     .where('inStock',isEqualTo: "true")
-                    .where('rentDate', isEqualTo: picked)
-                    //.where('rentDate', isLessThan: endOfDay)
+                    //.where('rentDate', isEqualTo: picked)
                     .orderBy("time",descending: true)
                     .snapshots()
                     : FirebaseFirestore.instance.collection('Products')
@@ -120,9 +129,6 @@ class _ProductListState extends State<ProductList> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    if (kDebugMode) {
-                      print(snapshot.data!.docs);
-                    }
                     return Stack(
                       children: [
                         Opacity(
@@ -177,10 +183,12 @@ class _ProductListState extends State<ProductList> {
                               if(search.isEmpty && name.isEmpty || name == "")
                               Expanded(
                                 child: GridView.builder(
-                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 0.8,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                      childAspectRatio: 0.75,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
                                   itemCount: snapshot.data!.docs.length,
                                   itemBuilder: (context, index) {
                                     var data = snapshot.data!.docs[index];
+                                    DateTime? rod= (data['returnDate'] == null)?null:data['returnDate'].toDate();
                                     return Stack(
                                       children: [
                                         InkWell(
@@ -218,6 +226,8 @@ class _ProductListState extends State<ProductList> {
                                                     ),
                                                   ),
                                                 ),
+                                                // Expanded(
+                                                //     child: (rod==null)?const CommonText(""):CommonText.semiBold("returnDate: ${rod.day}-${rod.month}-${rod.year}" ?? "",color: AppColor.black,size: 11,))
                                               ],
                                             ),
                                           ),
@@ -236,10 +246,11 @@ class _ProductListState extends State<ProductList> {
                               if(search.isNotEmpty && name.isNotEmpty)
                               Expanded(
                                 child: GridView.builder(
-                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 0.8,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 0.75,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
                                   itemCount:search.length,
                                   itemBuilder: (context, index) {
                                     var data = search[index];
+                                    DateTime? rod= (data['returnDate'] == null)?null:data['returnDate'].toDate();
                                     return Stack(
                                       children: [
                                         InkWell(
@@ -277,6 +288,8 @@ class _ProductListState extends State<ProductList> {
                                                     ),
                                                   ),
                                                 ),
+                                                Expanded(
+                                                    child: (rod==null)?const CommonText(""):CommonText.semiBold("${rod.day}-${rod.month}-${rod.year}" ?? "",color: AppColor.black,size: 11,))
                                               ],
                                             ),
                                           ),
@@ -308,7 +321,6 @@ class _ProductListState extends State<ProductList> {
                     .where('id', isEqualTo: widget.cat_id)
                     .where('inStock',isEqualTo: "false")
                     .where('rentDate', isEqualTo: picked)
-                //.where('rentDate', isLessThan: endOfDay)
                     .orderBy("time",descending: true)
                     .snapshots()
                     : FirebaseFirestore.instance.collection('Products')
@@ -362,9 +374,6 @@ class _ProductListState extends State<ProductList> {
                                           setState(() {
                                             name=value;
                                             search=snapshot.data!.docs.where((element) => element['name'].toString().toLowerCase().startsWith(name.toLowerCase())).toList();
-                                            if (kDebugMode) {
-                                              print("heloooo ::::${search.toString()}");
-                                            }
                                           });
                                         },
                                       ),
@@ -378,10 +387,12 @@ class _ProductListState extends State<ProductList> {
                               if(search.isEmpty && name.isEmpty || name == "")
                               Expanded(
                                 child: GridView.builder(
-                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 0.8,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                      childAspectRatio: 0.75,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
                                   itemCount: snapshot.data!.docs.length,
                                   itemBuilder: (context, index) {
                                     var data = snapshot.data!.docs[index];
+                                    DateTime? rod= (data['returnDate'] == null)?null:data['returnDate'].toDate();
                                     return Stack(
                                       children: [
                                         InkWell(
@@ -419,6 +430,8 @@ class _ProductListState extends State<ProductList> {
                                                     ),
                                                   ),
                                                 ),
+                                                Expanded(
+                                                    child: (rod==null)?const CommonText(""):CommonText.semiBold("returnDate: ${rod.day}-${rod.month}-${rod.year}" ?? "",color: AppColor.black,size: 11,))
                                               ],
                                             ),
                                           ),
@@ -437,10 +450,11 @@ class _ProductListState extends State<ProductList> {
                               if(search.isNotEmpty && name.isNotEmpty)
                                 Expanded(
                                   child: GridView.builder(
-                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 0.8,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
+                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 0.75,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
                                     itemCount: search.length,
                                     itemBuilder: (context, index) {
                                       var data = search[index];
+                                      DateTime? rod= (data['returnDate'] == null)?null:data['returnDate'].toDate();
                                       return Stack(
                                         children: [
                                           InkWell(
@@ -448,7 +462,7 @@ class _ProductListState extends State<ProductList> {
                                               Navigator.push(context, MaterialPageRoute(builder: (context) =>  UpdateProduct(snapShot: snapshot.data!.docs[index],id: snapshot.data!.docs[index].id),));
                                             },
                                             child: Container(
-                                              decoration: BoxDecoration(/*border: Border.all(width: 1, color: Colors.black), */borderRadius: BorderRadius.circular(9)),
+                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(9)),
                                               child: Column(
                                                 children: [
                                                   Container(
@@ -478,6 +492,8 @@ class _ProductListState extends State<ProductList> {
                                                       ),
                                                     ),
                                                   ),
+                                                  Expanded(
+                                                      child: (rod==null)?const CommonText(""):CommonText.semiBold("returnDate: ${rod.day}-${rod.month}-${rod.year}" ?? "",color: AppColor.black,size: 11,))
                                                 ],
                                               ),
                                             ),

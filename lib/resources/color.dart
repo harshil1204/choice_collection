@@ -6,7 +6,7 @@ abstract class AppColor {
   static const black30 = Color(0xFF121212);
   static const transparent = Color(0x00000000);
 
-  static const primary = Color(0xffD27D2D);
+  static const primary = /*Color(0xffD27D2D)*/Color(0xFF000000);
   static const secondary = Color(0xFF342BBF);
   static const background = Color(0xFFE5E5E5);
 

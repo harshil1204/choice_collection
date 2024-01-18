@@ -22,28 +22,31 @@ class UpdateProduct extends StatefulWidget {
 }
 
 class _UpdateProductState extends State<UpdateProduct> {
-  final TextEditingController _productPriceController = TextEditingController();
   final TextEditingController _productNameController = TextEditingController();
   final TextEditingController _productDescController = TextEditingController();
-  final TextEditingController _productStatusController = TextEditingController();
 
   String? imageUrl;
   DateTime? picked;
-  DateTime? picked1=DateTime.now();
+  DateTime? picked1;
+
+  String groupValue="true";
 
   @override
   void initState() {
     _productNameController.text=widget.snapShot['name'];
     _productDescController.text=widget.snapShot['description'];
-    _productStatusController.text=widget.snapShot['inStock'];
+    groupValue = widget.snapShot['inStock'];
     imageUrl=widget.snapShot['url'];
     picked =(widget.snapShot['rentDate'] == null)
-        ? widget.snapShot['rentDate']
+        ? DateTime.now()
         : widget.snapShot['rentDate'].toDate();
     picked1 =(widget.snapShot['returnDate'] == null)
-        ? widget.snapShot['returnDate']
+        ? DateTime.now()
         : widget.snapShot['returnDate'].toDate();
-    // TODO: implement initState
+    if(groupValue == "true"){
+      picked = null;
+      picked1 = null;
+    }
     super.initState();
   }
   uploadImage() async {
@@ -95,13 +98,12 @@ class _UpdateProductState extends State<UpdateProduct> {
     setState(() {
 
     });
-    print(picked1);
     // if (picked != null && picked != context.read<SelectDateProvider>().selectedDate) {
     //   context.read<SelectDateProvider>().updateSelectedDate(picked);
     // }
   }
 
-  void updateProductDetails(String productName,String desc,String status) async {
+  void updateProductDetails(String productName,String desc) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     try {
@@ -111,7 +113,7 @@ class _UpdateProductState extends State<UpdateProduct> {
         'description':desc,
         'rentDate':picked,
         'returnDate':picked1,
-        'inStock':status,
+        'inStock':groupValue,
       });
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(),),(route) => false,);
       print('Product details updated successfully');
@@ -124,7 +126,11 @@ class _UpdateProductState extends State<UpdateProduct> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Update the product details"),
+        title: const CommonText.bold("Update the product details",color: AppColor.white,size:17),
+        backgroundColor: AppColor.primary,
+        iconTheme: const IconThemeData(
+            color: AppColor.white
+        ),
       ),
       body: Stack(
         children: [
@@ -138,15 +144,7 @@ class _UpdateProductState extends State<UpdateProduct> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 // crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // TextField(
-                  //   controller: _categoryIdController,
-                  //   decoration: const InputDecoration(
-                  //     labelText: 'Category id',
-                  //     border: OutlineInputBorder(),
-                  //   ),
-                  // ),
                   const SizedBox(height: 30,),
-
                   TextField(
                     controller: _productNameController,
                     decoration: const InputDecoration(
@@ -155,16 +153,52 @@ class _UpdateProductState extends State<UpdateProduct> {
                     ),
                   ),
                   const SizedBox(height: 10,),
-                  TextField(
-                    controller: _productStatusController,
-                    decoration: const InputDecoration(
-                      labelText: 'Product status (true or false)',
-                      border: OutlineInputBorder(),
+                  const Align( alignment: Alignment.centerLeft,child: CommonText.semiBold("order Status :",size: 16,color: AppColor.black,)),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 5),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: AppColor.black,width: 1)
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const CommonText.semiBold("Available : ",color: AppColor.black,size: 14,),
+                            Radio(
+                              value: "true",
+                              groupValue: groupValue,
+                              onChanged: (value) {
+                                setState(() {
+                                    picked = null;
+                                    picked1 = null;
+                                  groupValue = value!;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const CommonText.semiBold("In order : ",color: AppColor.black,size: 14,),
+                            Radio(
+                              value: "false",
+                              groupValue: groupValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  groupValue = value!;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 10,),
+                  const SizedBox(height: 12,),
                   TextField(
-                    maxLines: 3,
+                    maxLines: 2,
                     controller: _productDescController,
                     decoration: const InputDecoration(
                       labelText: 'Product Description',
@@ -187,7 +221,7 @@ class _UpdateProductState extends State<UpdateProduct> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           const CommonText.bold("Select date for rent: ",size: 15),
-                          (picked.toString()==null)
+                          (picked==null)
                               ? const Icon(Icons.date_range,size: 30,)
                               :CommonText("${picked!.day.toString()}-${picked!.month.toString()}-${picked!.year.toString()}",maxLines: 3,),
                         ],
@@ -210,7 +244,7 @@ class _UpdateProductState extends State<UpdateProduct> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           const CommonText.bold("Select return order date: ",size: 15),
-                          (picked1.toString()==null)
+                          (picked1==null)
                               ? const Icon(Icons.date_range,size: 30,)
                               :CommonText("${picked1!.day.toString()}-${picked1!.month.toString()}-${picked1!.year.toString()}",maxLines: 3,),
                         ],
@@ -250,14 +284,11 @@ class _UpdateProductState extends State<UpdateProduct> {
                       String productName = _productNameController.text.trim();
 
                       String productDesc = _productDescController.text.trim();
-
-                      String productStatus = _productStatusController.text.trim();
                       //uploadImage();
-                      if (productName.isNotEmpty && productStatus.isNotEmpty &&  imageUrl!.isNotEmpty && productDesc.isNotEmpty) {
-                        updateProductDetails(productName,productDesc,productStatus);
+                      if (productName.isNotEmpty &&   imageUrl!.isNotEmpty ) {
+                        updateProductDetails(productName,productDesc);
                         _productNameController.clear();
                         _productDescController.clear();
-                        _productStatusController.clear();
                         imageUrl="";
                       }
                     },

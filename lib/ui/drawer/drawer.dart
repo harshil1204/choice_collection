@@ -1,3 +1,4 @@
+import 'package:choice_collection/widget/text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -168,54 +169,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ],
             ),
           ),
-        /*  Align(
+          const Align(
             alignment: Alignment.bottomCenter,
             child:Padding(
-              padding: const EdgeInsets.only(bottom: 25),
-              child: Row(
+              padding: EdgeInsets.only(bottom: 15),
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  InkWell(
-                      onTap: ()async{
-                        final url = Uri.parse('https://www.facebook.com/profile.php?id=61551243120905&mibextid=ZbWKwL');
-                        if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-                          throw Exception('Could not launch $url');
-                        }
-                      },
-                      child: Image.asset('assets/icon/facebook.png',width: 35,height: 35,fit: BoxFit.fill)),
-                  const SizedBox(width: 9,),
-                  InkWell(
-                      onTap: () async{
-                        final url = Uri.parse('https://instagram.com/_gokul_jewellers?igshid=OGQ5ZDc2ODk2ZA==');
-                        if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-                          throw Exception('Could not launch $url');
-                        }
-                      },
-                      child: Image.asset('assets/icon/instagram.png',width: 35,height: 35,fit: BoxFit.fill)),
-                  const SizedBox(width: 9,),
-                  InkWell(
-                      onTap: () async{
-                        var contact = "+919408851222";
-                        final url = Uri.parse('whatsapp://send?phone=$contact&text=Hi, I need some help');
-                        if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-                          throw Exception('Could not launch $url');
-                        }
-                      },
-                      child: Image.asset('assets/icon/whatsapp.png',width: 35,height: 35,fit: BoxFit.fill)),
-
-                  const SizedBox(width: 9,),
-                  InkWell(
-                      onTap: () async{
-                        final url = Uri.parse('https://maps.app.goo.gl/Ubg4ZumM6fxo23wG9');
-                        if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-                          throw Exception('Could not launch $url');
-                        }
-                      },
-                      child: Image.asset('assets/icon/map.png',width: 35,height: 35,fit: BoxFit.fill)),
+                  CommonText.medium("Developed by",color: AppColor.grey,size: 10,),
+                  CommonText.semiBold("Sinma Infotech Pvt.Ltd.",color: AppColor.black,size: 12,)
                 ],
               ),
             ),
-          )*/
+          )
         ],
       ),
     );

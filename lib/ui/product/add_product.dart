@@ -22,7 +22,6 @@ class AddProduct extends StatefulWidget {
 }
 
 class _AddProductState extends State<AddProduct> {
-  final TextEditingController _productPriceController = TextEditingController();
   final TextEditingController _productNameController = TextEditingController();
   final TextEditingController _productDescController = TextEditingController();
   final TextEditingController _productStatusController = TextEditingController();
@@ -31,10 +30,9 @@ class _AddProductState extends State<AddProduct> {
   DateTime? picked;
   DateTime? picked1;
 
-  bool available =false;
-  bool inOrder =false;
+  String groupValue= "true";
 
-  void addProductToFirestore(String productName,String desc,String status) async {
+  void addProductToFirestore(String productName,String desc) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     try {
@@ -43,7 +41,7 @@ class _AddProductState extends State<AddProduct> {
         'name': productName,
         'url':imageUrl,
         'description':desc,
-        'inStock':status,
+        'inStock':groupValue,
         'rentDate':picked,
         'returnDate':picked1,
         'time': DateTime.now(),
@@ -144,42 +142,47 @@ class _AddProductState extends State<AddProduct> {
                     ),
                   ),
                   const SizedBox(height: 10,),
-              const Align( alignment: Alignment.centerLeft,child: CommonText.bold("order Status :",size: 16,color: AppColor.black,)),
+              const Align( alignment: Alignment.centerLeft,child: CommonText.semiBold("order Status :",size: 16,color: AppColor.black,)),
               Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 5),
                 decoration: BoxDecoration(
                   border: Border.all(color: AppColor.black,width: 1)
                 ),
                 child: Column(
                   children: [
-                    CheckboxListTile(
-                      title: const Text("available"),
-                      value: available,
-                      onChanged: (value) {
-                        setState(() {
-                          available=value!;
-                        });
-                      },
-                    ),
-                        CheckboxListTile(
-                      title:  const Text("In order"),
-                      value: inOrder,
-                      onChanged: (value) {
-                        setState(() {
-                          inOrder=value!;
-                        });
-                      },
+                   Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     children: [
+                       const CommonText.semiBold("Available : ",color: AppColor.black,size: 14,),
+                       Radio(
+                           value: "true",
+                           groupValue: groupValue,
+                           onChanged: (value) {
+                             setState(() {
+                             groupValue = value!;
+                             });
+                           },
+                       ),
+                     ],
+                   ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const CommonText.semiBold("In order : ",color: AppColor.black,size: 14,),
+                        Radio(
+                           value: "false",
+                           groupValue: groupValue,
+                           onChanged: (value) {
+                             setState(() {
+                             groupValue = value!;
+                             });
+                           },
+                   ),
+                      ],
                     ),
                   ],
                 ),
               ),
-                  // const SizedBox(height: 10,),
-                  // TextField(
-                  //   controller: _productStatusController,
-                  //   decoration: const InputDecoration(
-                  //     labelText: 'Product Status (true or false)',
-                  //     border: OutlineInputBorder(),
-                  //   ),
-                  // ),
                   const SizedBox(height: 10,),
                   TextField(
                     maxLines: 3,
@@ -268,12 +271,10 @@ class _AddProductState extends State<AddProduct> {
                     onPressed: () {
                       String productName = _productNameController.text.trim();
                       String productDesc = _productDescController.text.trim();
-                      String productStatus = _productStatusController.text.trim();
-                      if (productName.isNotEmpty  && imageUrl!.isNotEmpty && productDesc.isNotEmpty ) {
-                        addProductToFirestore(productName,productDesc,productStatus);
+                      if (productName.isNotEmpty  && imageUrl!.isNotEmpty && imageUrl !=null) {
+                        addProductToFirestore(productName,productDesc);
                         _productNameController.clear();
                         _productDescController.clear();
-                        _productStatusController.clear();
                         imageUrl="";
                       }
                     },

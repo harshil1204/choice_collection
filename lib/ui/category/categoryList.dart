@@ -21,10 +21,10 @@ class _CategoryListState extends State<CategoryList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: AppColor.white
         ),
-        title: const CommonText.medium("Category List",color: AppColor.white,size: 17,),
+        title: const CommonText.bold("Category List",color: AppColor.white,size: 17,),
         backgroundColor: AppColor.primary,
         actions: [
           IconButton(onPressed: (){

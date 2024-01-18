@@ -1,6 +1,8 @@
 
 import 'package:choice_collection/config/config.dart';
 import 'package:choice_collection/homepage.dart';
+import 'package:choice_collection/resources/color.dart';
+import 'package:choice_collection/widget/text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +63,11 @@ class _AddCatState extends State<AddCat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Category"),
+        title:  const CommonText.bold("Add Category",color: AppColor.white,size:17),
+        backgroundColor: AppColor.primary,
+        iconTheme: const IconThemeData(
+            color: AppColor.white
+        ),
       ),
       body: Stack(
         children: [
@@ -114,7 +120,7 @@ class _AddCatState extends State<AddCat> {
                 ElevatedButton(
                   onPressed: () {
                     String categoryName = _categoryController.text.trim();
-                    if (categoryName.isNotEmpty) {
+                    if (categoryName.isNotEmpty && imageUrl!=null) {
                       addCategoryToFirestore(categoryName);
                       _categoryController.clear();
                     }

@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:choice_collection/config/config.dart';
 import 'package:choice_collection/homepage.dart';
+import 'package:choice_collection/resources/color.dart';
+import 'package:choice_collection/widget/text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -98,7 +100,11 @@ class _UpdateCatState extends State<UpdateCat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Update Category"),
+        title: const CommonText.bold("Update Category",color: AppColor.white,size:17),
+        backgroundColor: AppColor.primary,
+        iconTheme: const IconThemeData(
+            color: AppColor.white
+        ),
         actions: [
           IconButton(onPressed:(){
             deleteCat(widget.id);
