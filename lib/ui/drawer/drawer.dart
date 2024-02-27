@@ -176,8 +176,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CommonText.medium("Developed by",color: AppColor.grey,size: 10,),
-                  CommonText.semiBold("Sinma Infotech Pvt.Ltd.",color: AppColor.black,size: 12,)
+                  CommonText.medium("developed by",color: AppColor.textLight,size: 10,),
+                  CommonText.semiBold("Ekcero Infotech ",color: AppColor.black,size: 12,)
                 ],
               ),
             ),

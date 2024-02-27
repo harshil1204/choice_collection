@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 
 import 'add_product.dart';
 
@@ -169,7 +170,8 @@ class _ProductListState extends State<ProductList> {
                                           }
                                           setState(() {
                                             name=value;
-                                            search=snapshot.data!.docs.where((element) => element['name'].toString().toLowerCase().startsWith(name.toLowerCase())).toList();
+                                            search=snapshot.data!.docs.where((element) =>
+                                              element['name'].toString().toLowerCase().contains(name.toLowerCase())).toList();
                                           });
                                         },
                                       ),
@@ -373,7 +375,8 @@ class _ProductListState extends State<ProductList> {
                                           }
                                           setState(() {
                                             name=value;
-                                            search=snapshot.data!.docs.where((element) => element['name'].toString().toLowerCase().startsWith(name.toLowerCase())).toList();
+                                            search=snapshot.data!.docs.where((element) =>
+                                                element['name'].toString().toLowerCase().contains(name.toLowerCase())).toList();
                                           });
                                         },
                                       ),
