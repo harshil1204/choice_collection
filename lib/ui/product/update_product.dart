@@ -57,7 +57,7 @@ class _UpdateProductState extends State<UpdateProduct> {
     // String currentdate = datestamp.format(now);
 
     //Select Image
-    final image = await _imagePicker.pickImage(source: ImageSource.gallery);
+    final image = await _imagePicker.pickImage(source: ImageSource.gallery,imageQuality: 60);
     if (image != null){
       //Upload to Firebase
       var snapshot = await _firebaseStorage.ref()
