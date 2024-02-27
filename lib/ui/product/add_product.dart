@@ -243,9 +243,11 @@ class _AddProductState extends State<AddProduct> {
                       uploadImage();
                     },
                     child: Container(
-                      // height: 130,
+                        height: 200,
+                        width: double.infinity - 20,
+                        clipBehavior: Clip.hardEdge,
                         margin: const EdgeInsets.all(15),
-                        padding: const EdgeInsets.all(40),
+                        // padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: const BorderRadius.all(
@@ -256,8 +258,8 @@ class _AddProductState extends State<AddProduct> {
                             BoxShadow(
                               color: Colors.black12,
                               offset: Offset(2, 2),
-                              spreadRadius: 2,
-                              blurRadius: 1,
+                              spreadRadius: 3,
+                              blurRadius: 3,
                             ),
                           ],
                         ),

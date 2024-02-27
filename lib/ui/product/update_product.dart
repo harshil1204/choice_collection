@@ -256,22 +256,25 @@ class _UpdateProductState extends State<UpdateProduct> {
                       uploadImage();
                     },
                     child: Container(
+                        height: 200,
+                        width: double.infinity - 20,
+                        clipBehavior: Clip.hardEdge,
                         margin: const EdgeInsets.all(15),
-                        padding: const EdgeInsets.all(40),
+                        // padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: const BorderRadius.all(
                             Radius.circular(15),
                           ),
                           border: Border.all(color: Colors.white),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black12,
-                              offset: Offset(2, 2),
-                              spreadRadius: 2,
-                              blurRadius: 1,
-                            ),
-                          ],
+                          // boxShadow: const [
+                          //   BoxShadow(
+                          //     color: Colors.black12,
+                          //     offset: Offset(2, 2),
+                          //     spreadRadius: 2,
+                          //     blurRadius: 1,
+                          //   ),
+                          // ],
                         ),
                         child: (imageUrl == null)
                             ? const Icon(Icons.photo)
