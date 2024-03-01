@@ -9,8 +9,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:intl/intl.dart';
 
+import '../order/add_order.dart';
 import 'add_product.dart';
 
 
@@ -66,6 +66,8 @@ class _ProductListState extends State<ProductList> {
 
   String name="";
   List search=[];
+  List filterDate=[];
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -108,7 +110,7 @@ class _ProductListState extends State<ProductList> {
                   fontWeight: FontWeight.bold
               ),
               tabs:const [
-                Tab(text: "Available",),
+                Tab(text: "All Stock",),
                 Tab(text: "In order",),
               ]
           ),
@@ -116,16 +118,9 @@ class _ProductListState extends State<ProductList> {
         body: TabBarView(
           children: [
             StreamBuilder<QuerySnapshot>(
-                stream:(picked!=null)
-                    ?FirebaseFirestore.instance.collection('Products')
+                stream:FirebaseFirestore.instance.collection('Products')
                     .where('id', isEqualTo: widget.cat_id)
-                    .where('inStock',isEqualTo: "true")
-                    //.where('rentDate', isEqualTo: picked)
-                    .orderBy("time",descending: true)
-                    .snapshots()
-                    : FirebaseFirestore.instance.collection('Products')
-                    .where('id', isEqualTo: widget.cat_id)
-                    .where('inStock',isEqualTo: "true")
+                    // .where('inStock',isEqualTo: "true")
                     .orderBy("time",descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
@@ -152,7 +147,7 @@ class _ProductListState extends State<ProductList> {
                                       )
                                     ]
                                 ),
-                                child:  Row(
+                                child: Row(
                                   children: [
                                     const Icon(Icons.search,color: AppColor.primary),
                                     const Gap(7),
@@ -186,7 +181,7 @@ class _ProductListState extends State<ProductList> {
                               Expanded(
                                 child: GridView.builder(
                                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                      childAspectRatio: 0.75,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
+                                      childAspectRatio: 0.85,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 12),
                                   itemCount: snapshot.data!.docs.length,
                                   itemBuilder: (context, index) {
                                     var data = snapshot.data!.docs[index];
@@ -195,8 +190,8 @@ class _ProductListState extends State<ProductList> {
                                       children: [
                                         InkWell(
                                           onTap: () {
-                                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  UpdateProduct(snapShot: snapshot.data!.docs[index],id: snapshot.data!.docs[index].id),));
-                                          },
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                                AddOrder(pid: data.id.toString(),name: data['name'].toString(),)));                                          },
                                           child: Container(
                                             decoration: BoxDecoration(/*border: Border.all(width: 1, color: Colors.black), */borderRadius: BorderRadius.circular(9)),
                                             child: Column(
@@ -238,7 +233,14 @@ class _ProductListState extends State<ProductList> {
                                           alignment: Alignment.topRight,
                                           child: IconButton(onPressed: (){
                                             deleteProduct(snapshot.data!.docs[index].id,snapshot.data!.docs[index]['url']);
-                                          }, icon: const Icon(Icons.delete)),
+                                          }, icon: const Icon(Icons.delete,color: AppColor.primary,)),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.topLeft,
+                                          child: IconButton(onPressed: (){
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                                UpdateProduct(snapShot: snapshot.data!.docs[index],id: snapshot.data!.docs[index].id),));
+                                          }, icon: const Icon(Icons.edit,color: AppColor.primary,)),
                                         ),
                                       ],
                                     );
@@ -248,7 +250,7 @@ class _ProductListState extends State<ProductList> {
                               if(search.isNotEmpty && name.isNotEmpty)
                               Expanded(
                                 child: GridView.builder(
-                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 0.75,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 0.85,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
                                   itemCount:search.length,
                                   itemBuilder: (context, index) {
                                     var data = search[index];
@@ -257,8 +259,8 @@ class _ProductListState extends State<ProductList> {
                                       children: [
                                         InkWell(
                                           onTap: () {
-                                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  UpdateProduct(snapShot: snapshot.data!.docs[index],id: snapshot.data!.docs[index].id),));
-                                          },
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                                AddOrder(pid: data.id.toString(),name: data['name'].toString(),)));                                          },
                                           child: Container(
                                             decoration: BoxDecoration(/*border: Border.all(width: 1, color: Colors.black), */borderRadius: BorderRadius.circular(9)),
                                             child: Column(
@@ -300,7 +302,14 @@ class _ProductListState extends State<ProductList> {
                                           alignment: Alignment.topRight,
                                           child: IconButton(onPressed: (){
                                             deleteProduct(snapshot.data!.docs[index].id,snapshot.data!.docs[index]['url']);
-                                          }, icon: const Icon(Icons.delete)),
+                                          }, icon: const Icon(Icons.delete,color: AppColor.primary,)),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.topLeft,
+                                          child: IconButton(onPressed: (){
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                                UpdateProduct(snapShot: snapshot.data!.docs[index],id: snapshot.data!.docs[index].id),));
+                                          }, icon: const Icon(Icons.edit,color: AppColor.primary,)),
                                         ),
                                       ],
                                     );
@@ -322,7 +331,9 @@ class _ProductListState extends State<ProductList> {
                     ?FirebaseFirestore.instance.collection('Products')
                     .where('id', isEqualTo: widget.cat_id)
                     .where('inStock',isEqualTo: "false")
-                    .where('rentDate', isEqualTo: picked)
+                    .where('order', arrayContains: {
+                      'rentDate':picked
+                      })
                     .orderBy("time",descending: true)
                     .snapshots()
                     : FirebaseFirestore.instance.collection('Products')
@@ -331,6 +342,7 @@ class _ProductListState extends State<ProductList> {
                     .orderBy("time",descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
+                  // filterDate = snapshot.data!.docs.where((element) => element['']).toList();
                   if (snapshot.hasData) {
                     if (kDebugMode) {
                       print(snapshot.data!.docs);
@@ -388,19 +400,20 @@ class _ProductListState extends State<ProductList> {
                                 height: 15,
                               ),
                               if(search.isEmpty && name.isEmpty || name == "")
-                              Expanded(
+                                Expanded(
                                 child: GridView.builder(
                                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                      childAspectRatio: 0.75,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
+                                      childAspectRatio: 0.85,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
                                   itemCount: snapshot.data!.docs.length,
                                   itemBuilder: (context, index) {
                                     var data = snapshot.data!.docs[index];
-                                    DateTime? rod= (data['returnDate'] == null)?null:data['returnDate'].toDate();
+                                    // DateTime? rod= (data['returnDate'] == null)?null:data['returnDate'].toDate();
                                     return Stack(
                                       children: [
                                         InkWell(
                                           onTap: () {
-                                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  UpdateProduct(snapShot: snapshot.data!.docs[index],id: snapshot.data!.docs[index].id),));
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                                AddOrder(pid: data.id.toString(),name: data['name'].toString(),)));
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(/*border: Border.all(width: 1, color: Colors.black), */borderRadius: BorderRadius.circular(9)),
@@ -433,8 +446,8 @@ class _ProductListState extends State<ProductList> {
                                                     ),
                                                   ),
                                                 ),
-                                                Expanded(
-                                                    child: (rod==null)?const CommonText(""):CommonText.semiBold("returnDate: ${rod.day}-${rod.month}-${rod.year}" ?? "",color: AppColor.black,size: 11,))
+                                                // Expanded(
+                                                //     child: (rod==null)?const CommonText(""):CommonText.semiBold("returnDate: ${rod.day}-${rod.month}-${rod.year}" ?? "",color: AppColor.black,size: 11,))
                                               ],
                                             ),
                                           ),
@@ -443,7 +456,14 @@ class _ProductListState extends State<ProductList> {
                                           alignment: Alignment.topRight,
                                           child: IconButton(onPressed: (){
                                             deleteProduct(snapshot.data!.docs[index].id,snapshot.data!.docs[index]['url']);
-                                          }, icon: const Icon(Icons.delete)),
+                                          }, icon: const Icon(Icons.delete,color: AppColor.primary)),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.topLeft,
+                                          child: IconButton(onPressed: (){
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                                UpdateProduct(snapShot: snapshot.data!.docs[index],id: snapshot.data!.docs[index].id),));
+                                          }, icon: const Icon(Icons.edit,color: AppColor.primary,)),
                                         ),
                                       ],
                                     );
@@ -453,11 +473,10 @@ class _ProductListState extends State<ProductList> {
                               if(search.isNotEmpty && name.isNotEmpty)
                                 Expanded(
                                   child: GridView.builder(
-                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 0.75,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
+                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 0.85,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
                                     itemCount: search.length,
                                     itemBuilder: (context, index) {
                                       var data = search[index];
-                                      DateTime? rod= (data['returnDate'] == null)?null:data['returnDate'].toDate();
                                       return Stack(
                                         children: [
                                           InkWell(
@@ -495,8 +514,8 @@ class _ProductListState extends State<ProductList> {
                                                       ),
                                                     ),
                                                   ),
-                                                  Expanded(
-                                                      child: (rod==null)?const CommonText(""):CommonText.semiBold("returnDate: ${rod.day}-${rod.month}-${rod.year}" ?? "",color: AppColor.black,size: 11,))
+                                                  // Expanded(
+                                                  //     child: (rod==null)?const CommonText(""):CommonText.semiBold("returnDate: ${rod.day}-${rod.month}-${rod.year}" ?? "",color: AppColor.black,size: 11,))
                                                 ],
                                               ),
                                             ),
@@ -505,7 +524,14 @@ class _ProductListState extends State<ProductList> {
                                             alignment: Alignment.topRight,
                                             child: IconButton(onPressed: (){
                                               deleteProduct(snapshot.data!.docs[index].id,snapshot.data!.docs[index]['url']);
-                                            }, icon: const Icon(Icons.delete)),
+                                            }, icon: const Icon(Icons.delete,color: AppColor.primary)),
+                                          ),
+                                          Align(
+                                            alignment: Alignment.topLeft,
+                                            child: IconButton(onPressed: (){
+                                              Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                                  UpdateProduct(snapShot: snapshot.data!.docs[index],id: snapshot.data!.docs[index].id),));
+                                            }, icon: const Icon(Icons.edit,color: AppColor.primary)),
                                           ),
                                         ],
                                       );

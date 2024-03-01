@@ -34,15 +34,14 @@ class _UpdateProductState extends State<UpdateProduct> {
   @override
   void initState() {
     _productNameController.text=widget.snapShot['name'];
-    _productDescController.text=widget.snapShot['description'];
     groupValue = widget.snapShot['inStock'];
     imageUrl=widget.snapShot['url'];
-    picked =(widget.snapShot['rentDate'] == null)
-        ? DateTime.now()
-        : widget.snapShot['rentDate'].toDate();
-    picked1 =(widget.snapShot['returnDate'] == null)
-        ? DateTime.now()
-        : widget.snapShot['returnDate'].toDate();
+    // picked =(widget.snapShot['rentDate'] == null)
+    //     ? DateTime.now()
+    //     : widget.snapShot['rentDate'].toDate();
+    // picked1 =(widget.snapShot['returnDate'] == null)
+    //     ? DateTime.now()
+    //     : widget.snapShot['returnDate'].toDate();
     if(groupValue == "true"){
       picked = null;
       picked1 = null;
@@ -110,7 +109,6 @@ class _UpdateProductState extends State<UpdateProduct> {
       await firestore.collection('Products').doc(widget.id).update({
         'name': productName,
         'url': imageUrl,
-        'description':desc,
         'rentDate':picked,
         'returnDate':picked1,
         'inStock':groupValue,
@@ -197,60 +195,6 @@ class _UpdateProductState extends State<UpdateProduct> {
                     ),
                   ),
                   const SizedBox(height: 12,),
-                  TextField(
-                    maxLines: 2,
-                    controller: _productDescController,
-                    decoration: const InputDecoration(
-                      labelText: 'Product Description',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 10,),
-                  InkWell(
-                    onTap: (){
-                      selectDate(context);
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: AppColor.purple.withOpacity(.7),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 4,),
-                      child:   Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          const CommonText.bold("Select date for rent: ",size: 15),
-                          (picked==null)
-                              ? const Icon(Icons.date_range,size: 30,)
-                              :CommonText("${picked!.day.toString()}-${picked!.month.toString()}-${picked!.year.toString()}",maxLines: 3,),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10,),
-                  InkWell(
-                    onTap: (){
-                      selectDate1(context);
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: AppColor.purple.withOpacity(.7),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 4,),
-                      child:   Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          const CommonText.bold("Select return order date: ",size: 15),
-                          (picked1==null)
-                              ? const Icon(Icons.date_range,size: 30,)
-                              :CommonText("${picked1!.day.toString()}-${picked1!.month.toString()}-${picked1!.year.toString()}",maxLines: 3,),
-                        ],
-                      ),
-                    ),
-                  ),
                   InkWell(
                     onTap: (){
                       uploadImage();

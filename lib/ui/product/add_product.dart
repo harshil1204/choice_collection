@@ -42,8 +42,7 @@ class _AddProductState extends State<AddProduct> {
         'url':imageUrl,
         'description':desc,
         'inStock':groupValue,
-        'rentDate':picked,
-        'returnDate':picked1,
+        'order':[],
         'time': DateTime.now(),
         // Add more fields related to the category if needed
       });
@@ -183,61 +182,16 @@ class _AddProductState extends State<AddProduct> {
                   ],
                 ),
               ),
+                  // const SizedBox(height: 10,),
+                  // TextField(
+                  //   controller: _productDescController,
+                  //   decoration: const InputDecoration(
+                  //     labelText: 'Product Description',
+                  //     border: OutlineInputBorder(),
+                  //   ),
+                  // ),
+
                   const SizedBox(height: 10,),
-                  TextField(
-                    maxLines: 3,
-                    controller: _productDescController,
-                    decoration: const InputDecoration(
-                      labelText: 'Product Description',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 10,),
-                  InkWell(
-                    onTap: (){
-                      selectDate(context);
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: AppColor.purple.withOpacity(.7),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child:  Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          const CommonText.bold("Select date for rent: ",size: 15),
-                          (picked==null)
-                              ?const Icon(Icons.date_range,size: 30,)
-                              :CommonText("${picked!.day.toString()}-${picked!.month.toString()}-${picked!.year.toString()}",maxLines: 3,),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10,),
-                  InkWell(
-                    onTap: (){
-                      selectDate1(context);
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: AppColor.purple.withOpacity(.7),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child:  Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          const CommonText.bold("Select return order date: ",size: 15),
-                          (picked1==null)
-                              ?const Icon(Icons.date_range,size: 30,)
-                              :CommonText("${picked1!.day.toString()}-${picked1!.month.toString()}-${picked1!.year.toString()}",maxLines: 3,),
-                        ],
-                      ),
-                    ),
-                  ),
                   InkWell(
                     onTap: (){
                       uploadImage();
