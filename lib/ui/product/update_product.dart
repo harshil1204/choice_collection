@@ -239,7 +239,7 @@ class _UpdateProductState extends State<UpdateProduct> {
                         imageUrl="";
                       }
                     },
-                    child: const Text('Update Category'),
+                    child: const Text('Update Product'),
                   ),
                 ],
               ),

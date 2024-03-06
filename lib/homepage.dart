@@ -1,9 +1,7 @@
 import 'package:choice_collection/resources/color.dart';
-import 'package:choice_collection/ui/category/add_category.dart';
 import 'package:choice_collection/ui/category/categoryList.dart';
 import 'package:choice_collection/ui/drawer/drawer.dart';
 import 'package:choice_collection/ui/product/main_page.dart';
-import 'package:choice_collection/ui/product/productList.dart';
 import 'package:choice_collection/widget/text.dart';
 import 'package:flutter/material.dart';
 

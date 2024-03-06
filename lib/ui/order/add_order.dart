@@ -26,10 +26,10 @@ class _AddOrderState extends State<AddOrder> {
 
   void addOrderToFirestore(String desc,BuildContext context) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
-
+    //Timestamp timestamp = Timestamp.fromDate(picked!);
     List<Map<String, dynamic>> b=[{
       'description':desc,
-      'rentDate':picked,
+      'rDate':picked,
       'returnDate':picked1,
       'time': DateTime.now(),
     }];
@@ -120,107 +120,116 @@ class _AddOrderState extends State<AddOrder> {
         actions: [
           ElevatedButton.icon(
             onPressed: (){
-              print(widget.pid);
               showDialog(
                 context: context,
                 builder: (context) {
-                  return Builder(
-                    builder: (context) {
-                      return Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 6,
-                        backgroundColor: Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const SizedBox(height: 40,),
-                                const CommonText.semiBold("Order Details : ",color: AppColor.primary,size: 18,),
-                                const SizedBox(height: 20,),
-                                TextField(
-                                  focusNode: _focusNode,
-                                  maxLines: 3,
-                                  controller: _productDescController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Product Description',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                ),
-                                const SizedBox(height: 10,),
-                                InkWell(
-                                  onTap: (){
-                                    _focusNode.unfocus();
-                                    selectDate(context);
-                                  },
-                                  child: Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: AppColor.purple.withOpacity(.7),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(vertical: 6),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        const CommonText.bold("Select date for rent: ",size: 15),
-                                        (picked==null)
-                                            ?const Icon(Icons.date_range,size: 30,)
-                                            :CommonText("${picked!.day.toString()}-${picked!.month.toString()}-${picked!.year.toString()}",maxLines: 3,),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 10,),
-                                InkWell(
-                                  onTap: (){
-                                    _focusNode.unfocus();
-                                    selectDate1(context);
-                                  },
-                                  child: Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: AppColor.purple.withOpacity(.7),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(vertical: 6),
-                                    child:  Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        const CommonText.bold("Select return order date: ",size: 15),
-                                        (picked1==null)
-                                            ?const Icon(Icons.date_range,size: 30,)
-                                            :CommonText("${picked1!.day.toString()}-${picked1!.month.toString()}-${picked1!.year.toString()}",maxLines: 3,),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    String productDesc = _productDescController.text.trim();
-                                    if (productDesc.isNotEmpty ) {
-                                      addOrderToFirestore(productDesc,context);
-                                      picked=null;
-                                      picked1=null;
-                                      setState(() {
-
-                                      });
-                                      _productDescController.clear();
-                                    }
-                                  },
-                                  child: const Text('Add Order'),
-                                ),
-                              ],
+                  return StatefulBuilder(builder: (context, setState) {
+                    return Builder(
+                        builder: (context) {
+                          return Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          ),
-                        ),
-                      );
-                    }
-                  );
+                            elevation: 6,
+                            backgroundColor: Colors.white,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(height: 40,),
+                                    const CommonText.semiBold("Order Details : ",color: AppColor.primary,size: 18,),
+                                    const SizedBox(height: 20,),
+                                    TextField(
+                                      focusNode: _focusNode,
+                                      maxLines: 3,
+                                      controller: _productDescController,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Product Description',
+                                        border: OutlineInputBorder(),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10,),
+                                    InkWell(
+                                      onTap: ()async{
+                                        _focusNode.unfocus();
+                                        await selectDate(context);
+                                        setState(() {
+                                        });                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          color: AppColor.purple.withOpacity(.7),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(vertical: 6),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            const CommonText.bold("Select date for rent: ",size: 15),
+                                            (picked==null)
+                                                ?const Icon(Icons.date_range,size: 30,)
+                                                :CommonText("${picked!.day.toString()}-${picked!.month.toString()}-${picked!.year.toString()}",maxLines: 3,),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10,),
+                                    InkWell(
+                                      onTap: ()async{
+                                        _focusNode.unfocus();
+                                       await selectDate1(context);
+                                        setState(() {
+                                        });
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          color: AppColor.purple.withOpacity(.7),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(vertical: 6),
+                                        child:  Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            const CommonText.bold("Select return order date: ",size: 15),
+                                            (picked1==null)
+                                                ?const Icon(Icons.date_range,size: 30,)
+                                                :CommonText("${picked1!.day.toString()}-${picked1!.month.toString()}-${picked1!.year.toString()}",maxLines: 3,),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        String productDesc = _productDescController.text.trim();
+                                        if (productDesc.isNotEmpty && picked != null && picked1 != null) {
+                                          addOrderToFirestore(productDesc,context);
+                                          picked=null;
+                                          picked1=null;
+                                          setState(() {
+
+                                          });
+                                          _productDescController.clear();
+                                        }
+                                        else{
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(content: CommonText.semiBold("please add description and date"))
+                                          );
+                                        }
+                                      },
+                                      child: const Text('Add Order'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                    );
+                  },);
                 },
               );
             },
@@ -258,7 +267,28 @@ class _AddOrderState extends State<AddOrder> {
                             children: [
                               InkWell(
                                   onTap: () async{
-                                    deleteOrder(data);
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: const CommonText.semiBold("Are you sure to delete ? ",color:AppColor.primary,size:20),
+                                          actions: [
+                                            ElevatedButton(
+                                                onPressed: (){
+                                                  Navigator.pop(context);
+                                                },child: const CommonText.bold("Cancel",color:AppColor.primary,size:16)
+                                            ),ElevatedButton(
+                                                onPressed: (){
+                                                  deleteOrder(data);
+                                                  Navigator.pop(context);
+                                                }
+                                                , child: const CommonText.bold("Delete",color:AppColor.primary,size:16)
+                                            )
+                                          ],
+                                        );
+                                      },
+                                    );
+
                                   },
                                   child: const Icon(Icons.delete,color: AppColor.primary,)),
                               Row(
@@ -270,7 +300,7 @@ class _AddOrderState extends State<AddOrder> {
                               Row(
                                 children: [
                                   const SizedBox(width: 120,child: CommonText.semiBold("Rent date : ",color: AppColor.primary,size: 15,)),
-                                  CommonText.semiBold(convertDate(data!['rentDate'].toDate()),color: AppColor.primary,size: 15,),
+                                  CommonText.semiBold(convertDate(data!['rDate'].toDate()),color: AppColor.primary,size: 15,),
                                 ],
                               ),
                               Row(

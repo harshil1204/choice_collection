@@ -107,7 +107,27 @@ class _UpdateCatState extends State<UpdateCat> {
         ),
         actions: [
           IconButton(onPressed:(){
-            deleteCat(widget.id);
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const CommonText.semiBold("Are you sure to delete ? ",color:AppColor.primary,size:20),
+                  actions: [
+                    ElevatedButton(
+                        onPressed: (){
+                          Navigator.pop(context);
+                        },child: const CommonText.bold("Cancel",color:AppColor.primary,size:16)
+                    ),ElevatedButton(
+                        onPressed: (){
+                          deleteCat(widget.id);
+                          Navigator.pop(context);
+                        }
+                        , child: const CommonText.bold("Delete",color:AppColor.primary,size:16)
+                    )
+                  ],
+                );
+              },
+            );
           } ,icon: const Icon(Icons.delete))
         ],
       ),

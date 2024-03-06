@@ -60,7 +60,7 @@ class _ProductListState extends State<ProductList> {
         setState(() {
         });
      if (kDebugMode) {
-       print(picked);
+       print(picked.toString());
      }
   }
 
@@ -70,6 +70,7 @@ class _ProductListState extends State<ProductList> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.cat_id);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -112,7 +113,7 @@ class _ProductListState extends State<ProductList> {
               tabs:const [
                 Tab(text: "All Stock",),
                 Tab(text: "In order",),
-              ]
+              ],
           ),
         ),
         body: TabBarView(
@@ -185,7 +186,6 @@ class _ProductListState extends State<ProductList> {
                                   itemCount: snapshot.data!.docs.length,
                                   itemBuilder: (context, index) {
                                     var data = snapshot.data!.docs[index];
-                                    DateTime? rod= (data['returnDate'] == null)?null:data['returnDate'].toDate();
                                     return Stack(
                                       children: [
                                         InkWell(
@@ -232,7 +232,27 @@ class _ProductListState extends State<ProductList> {
                                         Align(
                                           alignment: Alignment.topRight,
                                           child: IconButton(onPressed: (){
-                                            deleteProduct(snapshot.data!.docs[index].id,snapshot.data!.docs[index]['url']);
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const CommonText.semiBold("Are you sure to delete ? ",color:AppColor.primary,size:20),
+                                                  actions: [
+                                                    ElevatedButton(
+                                                        onPressed: (){
+                                                          Navigator.pop(context);
+                                                        },child: const CommonText.bold("Cancel",color:AppColor.primary,size:16)
+                                                    ),ElevatedButton(
+                                                        onPressed: (){
+                                                          deleteProduct(snapshot.data!.docs[index].id,snapshot.data!.docs[index]['url']);
+                                                          Navigator.pop(context);
+                                                        }
+                                                        , child: const CommonText.bold("Delete",color:AppColor.primary,size:16)
+                                                    )
+                                                  ],
+                                                );
+                                              },
+                                            );
                                           }, icon: const Icon(Icons.delete,color: AppColor.primary,)),
                                         ),
                                         Align(
@@ -254,7 +274,6 @@ class _ProductListState extends State<ProductList> {
                                   itemCount:search.length,
                                   itemBuilder: (context, index) {
                                     var data = search[index];
-                                    DateTime? rod= (data['returnDate'] == null)?null:data['returnDate'].toDate();
                                     return Stack(
                                       children: [
                                         InkWell(
@@ -292,8 +311,8 @@ class _ProductListState extends State<ProductList> {
                                                     ),
                                                   ),
                                                 ),
-                                                Expanded(
-                                                    child: (rod==null)?const CommonText(""):CommonText.semiBold("${rod.day}-${rod.month}-${rod.year}" ?? "",color: AppColor.black,size: 11,))
+                                                // Expanded(
+                                                //     child: (rod==null)?const CommonText(""):CommonText.semiBold("${rod.day}-${rod.month}-${rod.year}" ?? "",color: AppColor.black,size: 11,))
                                               ],
                                             ),
                                           ),
@@ -301,7 +320,27 @@ class _ProductListState extends State<ProductList> {
                                         Align(
                                           alignment: Alignment.topRight,
                                           child: IconButton(onPressed: (){
-                                            deleteProduct(snapshot.data!.docs[index].id,snapshot.data!.docs[index]['url']);
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const CommonText.semiBold("Are you sure to delete ? ",color:AppColor.primary,size:20),
+                                                  actions: [
+                                                    ElevatedButton(
+                                                        onPressed: (){
+                                                          Navigator.pop(context);
+                                                        },child: const CommonText.bold("Cancel",color:AppColor.primary,size:16)
+                                                    ),ElevatedButton(
+                                                        onPressed: (){
+                                                          deleteProduct(snapshot.data!.docs[index].id,snapshot.data!.docs[index]['url']);
+                                                          Navigator.pop(context);
+                                                        }
+                                                        , child: const CommonText.bold("Delete",color:AppColor.primary,size:16)
+                                                    )
+                                                  ],
+                                                );
+                                              },
+                                            );
                                           }, icon: const Icon(Icons.delete,color: AppColor.primary,)),
                                         ),
                                         Align(
@@ -327,25 +366,26 @@ class _ProductListState extends State<ProductList> {
                   }
                 }),
             StreamBuilder<QuerySnapshot>(
-                stream:(picked!=null)
-                    ?FirebaseFirestore.instance.collection('Products')
-                    .where('id', isEqualTo: widget.cat_id)
-                    .where('inStock',isEqualTo: "false")
-                    .where('order', arrayContains: {
-                      'rentDate':picked
-                      })
-                    .orderBy("time",descending: true)
-                    .snapshots()
-                    : FirebaseFirestore.instance.collection('Products')
+                stream: FirebaseFirestore.instance.collection('Products')
                     .where('id', isEqualTo: widget.cat_id)
                     .where('inStock',isEqualTo: "false")
                     .orderBy("time",descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
-                  // filterDate = snapshot.data!.docs.where((element) => element['']).toList();
+
                   if (snapshot.hasData) {
                     if (kDebugMode) {
                       print(snapshot.data!.docs);
+                    }
+                    if(picked == null){
+                      filterDate= snapshot.data!.docs;
+                    }
+                    else{
+                      filterDate = snapshot.data!.docs
+                          .where((element) =>
+                          (element['order'] as List<dynamic>)
+                              .any((element1) => element1['rDate'].toDate() == picked!))
+                          .toList();
                     }
                     return Stack(
                       children: [
@@ -404,9 +444,10 @@ class _ProductListState extends State<ProductList> {
                                 child: GridView.builder(
                                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                       childAspectRatio: 0.85,crossAxisCount: 2, crossAxisSpacing: 18, mainAxisSpacing: 14),
-                                  itemCount: snapshot.data!.docs.length,
+                                  itemCount: picked==null ? snapshot.data!.docs.length : filterDate.length,
                                   itemBuilder: (context, index) {
-                                    var data = snapshot.data!.docs[index];
+                                    var data = filterDate[index];
+                                    // var data = snapshot.data!.docs[index];
                                     // DateTime? rod= (data['returnDate'] == null)?null:data['returnDate'].toDate();
                                     return Stack(
                                       children: [
@@ -455,7 +496,27 @@ class _ProductListState extends State<ProductList> {
                                         Align(
                                           alignment: Alignment.topRight,
                                           child: IconButton(onPressed: (){
-                                            deleteProduct(snapshot.data!.docs[index].id,snapshot.data!.docs[index]['url']);
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const CommonText.semiBold("Are you sure to delete ? ",color:AppColor.primary,size:20),
+                                                  actions: [
+                                                    ElevatedButton(
+                                                        onPressed: (){
+                                                          Navigator.pop(context);
+                                                        },child: const CommonText.bold("Cancel",color:AppColor.primary,size:16)
+                                                    ),ElevatedButton(
+                                                        onPressed: (){
+                                                          deleteProduct(snapshot.data!.docs[index].id,snapshot.data!.docs[index]['url']);
+                                                          Navigator.pop(context);
+                                                        }
+                                                        , child: const CommonText.bold("Delete",color:AppColor.primary,size:16)
+                                                    )
+                                                  ],
+                                                );
+                                              },
+                                            );
                                           }, icon: const Icon(Icons.delete,color: AppColor.primary)),
                                         ),
                                         Align(
@@ -523,7 +584,27 @@ class _ProductListState extends State<ProductList> {
                                           Align(
                                             alignment: Alignment.topRight,
                                             child: IconButton(onPressed: (){
-                                              deleteProduct(snapshot.data!.docs[index].id,snapshot.data!.docs[index]['url']);
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      title: const CommonText.semiBold("Are you sure to delete ? ",color:AppColor.primary,size:20),
+                                                      actions: [
+                                                        ElevatedButton(
+                                                            onPressed: (){
+                                                              Navigator.pop(context);
+                                                            },child: const CommonText.bold("Cancel",color:AppColor.primary,size:16)
+                                                        ),ElevatedButton(
+                                                            onPressed: (){
+                                                              deleteProduct(snapshot.data!.docs[index].id,snapshot.data!.docs[index]['url']);
+                                                              Navigator.pop(context);
+                                                            }
+                                                            , child: const CommonText.bold("Delete",color:AppColor.primary,size:16)
+                                                        )
+                                                      ],
+                                                    );
+                                                  },
+                                              );
                                             }, icon: const Icon(Icons.delete,color: AppColor.primary)),
                                           ),
                                           Align(
